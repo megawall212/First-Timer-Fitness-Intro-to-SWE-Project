@@ -1,5 +1,5 @@
 import { ArrowRight } from "lucide-react";
-// import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function Hero() {
   return (
@@ -39,11 +39,11 @@ export function Hero() {
           </div>
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-              {/* <ImageWithFallback
+              <ImageWithFallback
                 src="https://images.unsplash.com/photo-1584827386916-b5351d3ba34b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaXRuZXNzJTIwd29ya291dCUyMGd5bXxlbnwxfHx8fDE3NzI1MjE3MDl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
                 alt="Person working out"
                 className="w-full h-[500px] object-cover"
-              /> */}
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-orange-600/20 to-blue-600/20"></div>
             </div>
             {/* Floating Points Card */}
