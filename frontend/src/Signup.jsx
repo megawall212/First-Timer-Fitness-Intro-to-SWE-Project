@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { auth, db } from "./firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 import { collection, addDoc } from "firebase/firestore";
 
 export default function Signup() {
@@ -12,12 +13,15 @@ export default function Signup() {
       const user = await createUserWithEmailAndPassword(auth, email, password);
       alert("Account created: " + user.user.email);
 
-      // add user to database
-      const docRef = await addDoc(collection(db, "users"), {
-        email: user.user.email, // add more field entries
+      // add user to database while checking for duplicates
+
+      await setDoc(doc(db, "users", user.user.uid), {
+      email: user.user.email,
       });
 
     } catch (error) {
+      console.log(error.code);
+      console.log(error.message);
       alert(error.message);
     }
   };
