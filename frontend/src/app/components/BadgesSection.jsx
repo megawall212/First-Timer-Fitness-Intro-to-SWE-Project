@@ -7,7 +7,7 @@ const badges = [
     description: "Complete your first workout",
     points: 50,
     color: "from-yellow-400 to-yellow-600",
-    unlocked: true
+    unlocked: false
   },
   {
     icon: Zap,
@@ -15,7 +15,7 @@ const badges = [
     description: "Complete 7 workouts in a row",
     points: 200,
     color: "from-orange-400 to-orange-600",
-    unlocked: true
+    unlocked: false
   },
   {
     icon: Star,
