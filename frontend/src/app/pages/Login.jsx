@@ -3,10 +3,12 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -20,8 +22,8 @@ export default function SignIn() {
 
     alert("Logged in: " + userCredential.user.email);
 
-    // OPTIONAL: redirect after login
-    // navigate("/dashboard");
+    //Redirect after successful login
+    navigate("/");
 
   } catch (error) {
     alert(error.message);
