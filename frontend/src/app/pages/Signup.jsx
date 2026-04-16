@@ -4,13 +4,13 @@ import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
 
   const handleSubmit = async (e) => {
   e.preventDefault();
