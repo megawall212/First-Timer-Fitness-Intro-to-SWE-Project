@@ -1,6 +1,9 @@
 import { ChevronRight, X, Lightbulb, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
+import { auth, db } from "../../firebase";
+import { doc, updateDoc, arrayUnion, increment } from "firebase/firestore";
+import { LoggedInContext } from "../../Context";
 
 // Exercise details with instructions and tips
 const exerciseDetails = {
@@ -61,6 +64,8 @@ const getExerciseDetails = (exerciseName) => {
   
   return exerciseDetails.default;
 };
+
+const POINTS_PER_EXERCISE = 10;
 
 const muscleGroups = [
   {
@@ -206,18 +211,129 @@ const muscleGroups = [
 ];
 
 export function MuscleGroups() {
+  const { loggedIn, userInfo, refreshUserInfo } = useContext(LoggedInContext);
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [startedLevel, setStartedLevel] = useState(null);
   const [completedExercises, setCompletedExercises] = useState(new Set());
 
-  const toggleExercise = (exerciseId) => {
-    const newCompleted = new Set(completedExercises);
-    if (newCompleted.has(exerciseId)) {
-      newCompleted.delete(exerciseId);
-    } else {
-      newCompleted.add(exerciseId);
+  const getTodayString = () => new Date().toISOString().split("T")[0];
+  const getYesterdayString = () => new Date(Date.now() - 86400000).toISOString().split("T")[0];
+
+  useEffect(() => {
+    setCompletedExercises(new Set(userInfo.completedExercises || []));
+  }, [userInfo.completedExercises]);
+
+  const getLevelExerciseIds = (levelId, level) =>
+    level.exercises.map((_, idx) => `${levelId}-${idx}`);
+
+  const hasCompletedLevel = (levelId, level, completedSet) =>
+    getLevelExerciseIds(levelId, level).every((exerciseId) => completedSet.has(exerciseId));
+
+  const hasCompletedAllLevelsInGroup = (group, completedSet) =>
+    group.levels.every((level) => hasCompletedLevel(`${group.id}-level-${level.level}`, level, completedSet));
+
+  const hasCompletedAnyGroupAllLevels = (completedSet) =>
+    muscleGroups.some((group) => hasCompletedAllLevelsInGroup(group, completedSet));
+
+  const hasCompletedAllGroups = (completedSet) =>
+    muscleGroups.every((group) => hasCompletedAllLevelsInGroup(group, completedSet));
+
+  const computeBadgeUnlocks = (data) => {
+    const existingBadges = new Set(data.badges || []);
+    const badgeDefinitions = [
+      { name: "First Steps", condition: data.workoutsCompleted >= 1, points: 50 },
+      { name: "Week Warrior", condition: data.workoutsCompleted >= 7, points: 200 },
+      { name: "Level Master", condition: hasCompletedAnyGroupAllLevels(new Set(data.completedExercises || [])), points: 500 },
+      { name: "Perfect Month", condition: data.currentStreak >= 30, points: 1000 },
+      { name: "Swamp Legend", condition: data.points >= 10000, points: 2500 },
+      { name: "Apex Predator", condition: hasCompletedAllGroups(new Set(data.completedExercises || [])), points: 5000 },
+    ];
+
+    const newBadges = [];
+    let badgePointBonus = 0;
+
+    for (const badge of badgeDefinitions) {
+      if (badge.condition && !existingBadges.has(badge.name)) {
+        newBadges.push(badge.name);
+        badgePointBonus += badge.points;
+      }
     }
-    setCompletedExercises(newCompleted);
+
+    return { newBadges, badgePointBonus };
+  };
+
+  const toggleExercise = async (exerciseId, levelId, level) => {
+    if (!loggedIn || !userInfo?.id || completedExercises.has(exerciseId)) {
+      return;
+    }
+
+    const userRef = doc(db, "users", userInfo.id);
+    const previousCompleted = new Set(completedExercises);
+    const nextCompleted = new Set(previousCompleted).add(exerciseId);
+
+    const levelCompleteBefore = hasCompletedLevel(levelId, level, previousCompleted);
+    const levelCompleteAfter = hasCompletedLevel(levelId, level, nextCompleted);
+    const workoutCompletedNow = !levelCompleteBefore && levelCompleteAfter;
+
+    const baseWorkoutCount = userInfo.workoutsCompleted || 0;
+    const baseStreak = userInfo.currentStreak || 0;
+    const basePoints = userInfo.points || 0;
+
+    let nextStreak = baseStreak;
+    let today = userInfo.lastWorkoutDate || "";
+    let willUpdateStreak = false;
+
+    if (workoutCompletedNow) {
+      const currentDay = getTodayString();
+      const yesterday = getYesterdayString();
+
+      if (userInfo.lastWorkoutDate === currentDay) {
+        nextStreak = baseStreak;
+      } else if (userInfo.lastWorkoutDate === yesterday) {
+        nextStreak = baseStreak + 1;
+      } else {
+        nextStreak = 1;
+      }
+
+      today = currentDay;
+      willUpdateStreak = true;
+    }
+
+    const updatedData = {
+      ...userInfo,
+      points: basePoints + POINTS_PER_EXERCISE,
+      workoutsCompleted: baseWorkoutCount + (workoutCompletedNow ? 1 : 0),
+      currentStreak: willUpdateStreak ? nextStreak : baseStreak,
+      lastWorkoutDate: willUpdateStreak ? today : userInfo.lastWorkoutDate || "",
+      completedExercises: Array.from(nextCompleted),
+      badges: userInfo.badges || [],
+    };
+
+    const { newBadges, badgePointBonus } = computeBadgeUnlocks(updatedData);
+    const pointsToAdd = POINTS_PER_EXERCISE + badgePointBonus;
+
+    const updates = {
+      completedExercises: arrayUnion(exerciseId),
+      points: increment(pointsToAdd),
+    };
+
+    if (workoutCompletedNow) {
+      updates.workoutsCompleted = increment(1);
+      updates.currentStreak = nextStreak;
+      updates.lastWorkoutDate = today;
+    }
+
+    if (newBadges.length > 0) {
+      updates.badges = arrayUnion(...newBadges);
+    }
+
+    try {
+      await updateDoc(userRef, updates);
+      setCompletedExercises(nextCompleted);
+      refreshUserInfo?.(auth.currentUser?.uid);
+    } catch (error) {
+      console.error("Failed to save workout progress:", error);
+    }
   };
 
   return (
@@ -317,8 +433,10 @@ export function MuscleGroups() {
                                 >
                                   <div className="flex items-start gap-4">
                                     <button
-                                      onClick={() => toggleExercise(exerciseId)}
-                                      className="mt-1"
+                                      onClick={() => toggleExercise(exerciseId, levelId, level)}
+                                      className={`mt-1 ${isCompleted ? 'cursor-not-allowed' : ''}`}
+                                      disabled={isCompleted}
+                                      title={isCompleted ? 'Completed' : 'Mark as completed'}
                                     >
                                       <CheckCircle2 
                                         className={`size-6 transition-colors ${

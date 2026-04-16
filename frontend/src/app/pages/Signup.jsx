@@ -2,10 +2,11 @@ import { auth, db } from "../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 export default function SignUp() {
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,16 +24,21 @@ export default function SignUp() {
 
     const user = userCredential.user;
 
-    alert("Account created: " + user.email);
-
-    //  Store user in Firestore
     await addDoc(collection(db, "users"), {
       uid: user.uid,
       name: name,
       email: user.email,
       createdAt: new Date(),
+      points: 0,
+      workoutsCompleted: 0,
+      currentStreak: 0,
+      lastWorkoutDate: "",
+      badges: [],
+      completedExercises: [],
     });
 
+    alert("Account created: " + user.email);
+    navigate("/");
   } catch (error) {
     alert(error.message);
   }

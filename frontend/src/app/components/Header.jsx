@@ -1,9 +1,11 @@
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link } from "react-router-dom";
+import { LoggedInContext } from "../../Context";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { loggedIn, userInfo } = useContext(LoggedInContext);
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200">
@@ -21,13 +23,22 @@ export default function Header() {
           <li><a href="#about" className="text-gray-700 hover:text-orange-600 transition-colors">About</a></li>
         </ul>
 
-        <div className="hidden md:flex items-center gap-4">
+        {!loggedIn && <div className="hidden md:flex items-center gap-4">
           <Link to="/login" className="px-4 py-2 text-gray-700 hover:text-orange-600 transition-colors">
             Sign In
           </Link>
           <Link to="/signup" className="px-6 py-2 bg-gradient-to-r from-orange-600 to-blue-600 text-white rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all">
             Start Free
           </Link>
+        </div>}
+
+        <div>
+          {loggedIn && (
+            <div className="text-right text-sm text-gray-700">
+              <div className="font-semibold">Welcome, {userInfo.name || userInfo.email}!</div>
+              <div className="text-xs text-gray-500">{userInfo.points ?? 0} points</div>
+            </div>
+          )}
         </div>
 
         {/* Mobile Menu Button */}

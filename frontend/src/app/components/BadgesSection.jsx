@@ -1,4 +1,6 @@
 import { Trophy, Star, Award, Crown, Zap, Target } from "lucide-react";
+import { useContext } from "react";
+import { LoggedInContext } from "../../Context";
 
 const badges = [
   {
@@ -7,7 +9,6 @@ const badges = [
     description: "Complete your first workout",
     points: 50,
     color: "from-yellow-400 to-yellow-600",
-    unlocked: false
   },
   {
     icon: Zap,
@@ -15,7 +16,6 @@ const badges = [
     description: "Complete 7 workouts in a row",
     points: 200,
     color: "from-orange-400 to-orange-600",
-    unlocked: false
   },
   {
     icon: Star,
@@ -23,7 +23,6 @@ const badges = [
     description: "Complete all 5 levels in one muscle group",
     points: 500,
     color: "from-blue-400 to-blue-600",
-    unlocked: false
   },
   {
     icon: Target,
@@ -31,7 +30,6 @@ const badges = [
     description: "30 days workout streak",
     points: 1000,
     color: "from-purple-400 to-purple-600",
-    unlocked: false
   },
   {
     icon: Award,
@@ -39,7 +37,6 @@ const badges = [
     description: "Earn 10,000 total points",
     points: 2500,
     color: "from-green-400 to-green-600",
-    unlocked: false
   },
   {
     icon: Crown,
@@ -47,11 +44,14 @@ const badges = [
     description: "Complete all levels in all muscle groups",
     points: 5000,
     color: "from-red-400 to-red-600",
-    unlocked: false
   }
 ];
 
 export function BadgesSection() {
+  const { userInfo } = useContext(LoggedInContext);
+  const unlockedBadges = new Set(userInfo.badges || []);
+  const totalUnlocked = unlockedBadges.size;
+
   return (
     <section id="badges" className="py-16 md:py-24 bg-gradient-to-b from-white to-orange-50">
       <div className="container mx-auto px-4">
@@ -67,14 +67,16 @@ export function BadgesSection() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {badges.map((badge, index) => {
             const Icon = badge.icon;
+            const unlocked = unlockedBadges.has(badge.name);
+
             return (
               <div
                 key={index}
                 className={`relative bg-white p-6 rounded-xl shadow-lg border-2 ${
-                  badge.unlocked ? 'border-orange-200' : 'border-gray-200'
-                } ${badge.unlocked ? '' : 'opacity-60'}`}
+                  unlocked ? 'border-orange-200' : 'border-gray-200'
+                } ${unlocked ? '' : 'opacity-60'}`}
               >
-                {!badge.unlocked && (
+                {!unlocked && (
                   <div className="absolute top-3 right-3">
                     <div className="w-6 h-6 bg-gray-400 rounded-full flex items-center justify-center text-white text-xs">
                       🔒
@@ -107,21 +109,21 @@ export function BadgesSection() {
               <div>
                 <div className="text-sm text-gray-600 mb-1">Your Total Points</div>
                 <div className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
-                  2,450
+                  {userInfo.points ?? 0}
                 </div>
               </div>
               <div className="w-px h-16 bg-gray-200"></div>
               <div>
                 <div className="text-sm text-gray-600 mb-1">Badges Unlocked</div>
                 <div className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
-                  2/6
+                  {totalUnlocked}/{badges.length}
                 </div>
               </div>
               <div className="w-px h-16 bg-gray-200"></div>
               <div>
                 <div className="text-sm text-gray-600 mb-1">Current Streak</div>
                 <div className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
-                  7 🔥
+                  {userInfo.currentStreak ?? 0} 🔥
                 </div>
               </div>
             </div>
