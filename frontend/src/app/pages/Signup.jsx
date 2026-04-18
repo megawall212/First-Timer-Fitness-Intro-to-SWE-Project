@@ -24,11 +24,13 @@ export default function SignUp() {
     );
 
     const user = userCredential.user;
+    const domain = email.split("@")[1];
 
     await addDoc(collection(db, "users"), {
       uid: user.uid,
       name: name,
       email: user.email,
+      domain: domain,
       createdAt: new Date(),
       points: 0,
       workoutsCompleted: 0,
