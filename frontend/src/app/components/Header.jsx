@@ -19,6 +19,10 @@ export default function Header() {
     }
   };
 
+  const handleSectionClick = (section) => {
+    navigate(`/${section}`);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm z-50 border-b border-gray-200">
       <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -31,10 +35,34 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex items-center gap-8">
-          <li><a href="#features" className="text-gray-700 hover:text-orange-600 transition-colors">Features</a></li>
-          <li><a href="#workouts" className="text-gray-700 hover:text-orange-600 transition-colors">Workouts</a></li>
-          <li><a href="#badges" className="text-gray-700 hover:text-orange-600 transition-colors">Badges</a></li>
-          <li><a href="#about" className="text-gray-700 hover:text-orange-600 transition-colors">About</a></li>
+          <li>
+            <button
+              type="button"
+              onClick={() => handleSectionClick("#features")}
+              className="text-gray-700 hover:text-orange-600 transition-colors"
+            >
+              Features
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => handleSectionClick("#workouts")}
+              className="text-gray-700 hover:text-orange-600 transition-colors"
+            >
+              Workouts
+            </button>
+          </li>
+          <li>
+            <button
+              type="button"
+              onClick={() => handleSectionClick("#badges")}
+              className="text-gray-700 hover:text-orange-600 transition-colors"
+            >
+              Badges
+            </button>
+          </li>
+          <li><Link to="/about" className="text-gray-700 hover:text-orange-600 transition-colors">About</Link></li>
         </ul>
 
         {!loggedIn ? (
@@ -78,10 +106,34 @@ export default function Header() {
         {isMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 md:hidden">
             <ul className="flex flex-col p-4 gap-4">
-              <li><a href="#features" className="text-gray-700 hover:text-orange-600 transition-colors">Features</a></li>
-              <li><a href="#workouts" className="text-gray-700 hover:text-orange-600 transition-colors">Workouts</a></li>
-              <li><a href="#badges" className="text-gray-700 hover:text-orange-600 transition-colors">Badges</a></li>
-              <li><a href="#about" className="text-gray-700 hover:text-orange-600 transition-colors">About</a></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleSectionClick("#features")}
+                  className="text-gray-700 hover:text-orange-600 transition-colors text-left"
+                >
+                  Features
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleSectionClick("#workouts")}
+                  className="text-gray-700 hover:text-orange-600 transition-colors text-left"
+                >
+                  Workouts
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => handleSectionClick("#badges")}
+                  className="text-gray-700 hover:text-orange-600 transition-colors text-left"
+                >
+                  Badges
+                </button>
+              </li>
+              <li><Link to="/about" className="text-gray-700 hover:text-orange-600 transition-colors">About</Link></li>
 
               {!loggedIn ? (
                 <>

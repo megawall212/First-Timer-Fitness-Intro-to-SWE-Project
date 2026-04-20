@@ -1,4 +1,5 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { LoggedInContext } from "../../Context";
 import { Hero } from "../components/Hero";
 import { Features } from "../components/Features";
@@ -6,7 +7,19 @@ import { MuscleGroups } from "../components/MuscleGroups";
 import { BadgesSection } from "../components/BadgesSection";
 
 export function Home() {
+  const location = useLocation();
   const { loggedIn, userInfo } = useContext(LoggedInContext);
+
+  useEffect(() => {
+    if (!location.hash) return;
+
+    const id = location.hash.replace("#", "");
+    const element = document.getElementById(id);
+
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [location.hash]);
 
   // Check if user is logged in and has a UFL or EDU email
   const isGator = loggedIn && userInfo.email && (
