@@ -2,9 +2,15 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" id="favicon" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>frontend</title>
+    <script>
+      // Randomly select one of 3 icons
+      const icons = ['citali.png', 'columbina.png', 'tao.png', "4.1.png", "firefly.png", "queen.png", "what.png"];
+      const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+      document.getElementById('favicon').href = '/' + randomIcon;
+    </script>
   </head>
   <body>
     <div id="root"></div>

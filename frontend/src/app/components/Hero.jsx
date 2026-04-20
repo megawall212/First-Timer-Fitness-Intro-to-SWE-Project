@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
@@ -7,6 +7,30 @@ export function Hero() {
   const navigate = useNavigate();
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
   const [scrollOffset, setScrollOffset] = useState(0);
+  const [animatedCounts, setAnimatedCounts] = useState([0, 0, 0]);
+  const statsRef = useRef(null);
+  const isAnimatingRef = useRef(false);
+  const frameRef = useRef(null);
+  const timeoutRef = useRef(null);
+
+  const stats = useMemo(
+    () => [
+      { label: "Gators Training", value: 500000 },
+      { label: "Points Earned", value: 50000000 },
+      { label: "Badges Unlocked", value: 1000000 },
+    ],
+    []
+  );
+
+  const formatStatValue = (value) => {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(value >= 10000000 ? 0 : 1).replace(/\.0$/, "")}M+`;
+    }
+    if (value >= 1000) {
+      return `${Math.round(value / 1000)}K+`;
+    }
+    return `${value}`;
+  };
 
   const handleStartJourney = () => {
     navigate("/login");
@@ -20,6 +44,65 @@ export function Hero() {
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  useEffect(() => {
+    if (!statsRef.current) return;
+
+    const cleanupAnimation = () => {
+      if (frameRef.current) {
+        cancelAnimationFrame(frameRef.current);
+      }
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      isAnimatingRef.current = false;
+    };
+
+    const animateOnce = () => {
+      const duration = 1200;
+      const startTime = performance.now();
+
+      const animate = (timestamp) => {
+        const progress = Math.min((timestamp - startTime) / duration, 1);
+        setAnimatedCounts(
+          stats.map((stat) => Math.floor(stat.value * progress))
+        );
+
+        if (progress < 1) {
+          frameRef.current = requestAnimationFrame(animate);
+        } else {
+          timeoutRef.current = window.setTimeout(() => {
+            if (isAnimatingRef.current) {
+              frameRef.current = requestAnimationFrame(animateOnce);
+            }
+          }, 900);
+        }
+      };
+
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          if (!isAnimatingRef.current) {
+            isAnimatingRef.current = true;
+            animateOnce();
+          }
+        } else {
+          cleanupAnimation();
+          setAnimatedCounts([0, 0, 0]);
+        }
+      },
+      { threshold: 0.4 }
+    );
+
+    observer.observe(statsRef.current);
+    return () => {
+      observer.disconnect();
+      cleanupAnimation();
+    };
+  }, [stats]);
 
   const handleMouseMove = (event) => {
     const { clientX, clientY, currentTarget } = event;
@@ -56,7 +139,8 @@ export function Hero() {
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
-            <div className="inline-block px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm">
+            <div className="inline-block relative px-4 py-2 bg-orange-50 text-orange-600 rounded-full text-sm">
+              <span className="home-flash-icon">⚡</span>
               🐊 100% Free Forever
             </div>
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight">
@@ -74,19 +158,15 @@ export function Hero() {
                 <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
-            <div className="flex items-center gap-8 pt-4">
-              <div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">500K+</div>
-                <div className="text-sm text-gray-600">Gators Training</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">50M+</div>
-                <div className="text-sm text-gray-600">Points Earned</div>
-              </div>
-              <div>
-                <div className="text-3xl font-bold bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">1M+</div>
-                <div className="text-sm text-gray-600">Badges Unlocked</div>
-              </div>
+            <div ref={statsRef} className="flex flex-wrap items-center gap-4 pt-4 hero-stats-row">
+              {stats.map((stat, index) => (
+                <div key={stat.label} className="hero-stat-card p-5 rounded-3xl border border-slate-200 bg-white/90 backdrop-blur-sm shadow-lg min-w-[150px] animate-stat-item">
+                  <div className="text-3xl sm:text-4xl font-bold hero-stat-number bg-gradient-to-r from-orange-600 to-blue-600 bg-clip-text text-transparent">
+                    {formatStatValue(animatedCounts[index])}
+                  </div>
+                  <div className="text-sm text-gray-600">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
           <div className="relative">

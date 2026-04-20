@@ -3,13 +3,14 @@ import { createUserWithEmailAndPassword, GoogleAuthProvider, FacebookAuthProvide
 import { collection, addDoc } from "firebase/firestore";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 
 export default function SignUp() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
 
   const handleSubmit = async (e) => {
@@ -166,6 +167,7 @@ export default function SignUp() {
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
                 placeholder="your.email@example.com"
+                autoComplete="email"
                 required
               />
             </div>
@@ -174,15 +176,25 @@ export default function SignUp() {
               <label htmlFor="password" className="block text-sm font-bold text-gray-900 mb-2">
                 Password
               </label>
-              <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
-                placeholder="Create a strong password"
-                required
-              />
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="w-full px-4 py-3 pr-10 border-2 border-gray-200 rounded-lg focus:border-orange-500 focus:outline-none transition-colors"
+                  placeholder="Create a strong password"
+                  autoComplete="new-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
               <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
             </div>
 

@@ -168,3 +168,101 @@
   box-shadow: 0 0 34px rgba(255, 159, 10, 0.7), 0 0 74px rgba(59, 130, 246, 0.3);
 }
 
+.home-flash-icon {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: linear-gradient(135deg, rgba(255, 183, 77, 1), rgba(59, 130, 246, 1));
+  color: white;
+  font-size: 0.8rem;
+  box-shadow: 0 12px 24px rgba(255, 159, 10, 0.35);
+  animation: flash-bounce 2.4s ease-in-out infinite;
+}
+
+.hero-stats-row {
+  opacity: 0;
+  transform: translateY(14px);
+  animation: hero-stats-appear 0.8s ease-out forwards 0.4s;
+}
+
+.hero-stat-card {
+  position: relative;
+  animation: hero-card-breathe 2.8s ease-in-out infinite alternate;
+}
+
+.hero-stat-number {
+  animation: hero-number-glow 2.8s ease-in-out infinite alternate;
+}
+
+.animate-stat-item {
+  animation: hero-stat-pop 0.8s ease-out forwards;
+}
+
+@keyframes hero-stats-appear {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-stat-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes hero-number-glow {
+  from {
+    text-shadow: 0 0 4px rgba(255, 165, 0, 0.3), 0 0 14px rgba(59, 130, 246, 0.2);
+  }
+  to {
+    text-shadow: 0 0 14px rgba(255, 165, 0, 0.6), 0 0 24px rgba(59, 130, 246, 0.35);
+  }
+}
+
+@keyframes flash-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-4px) scale(1.05);
+  }
+}
+
+@keyframes hero-card-breathe {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0.95;
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes gator-sway {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(10px, -8px) rotate(-8deg);
+  }
+  50% {
+    transform: translate(-10px, 10px) rotate(8deg);
+  }
+  75% {
+    transform: translate(6px, -6px) rotate(-4deg);
+  }
+}
+

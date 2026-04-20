@@ -5,6 +5,15 @@ import frierenGif from "../../assets/frieren-anime.gif";
 import igbGif from "../../assets/igb.gif";
 import bladeGif from "../../assets/blade.gif";
 import wallpaperVideo from "../../assets/wallpaper.mp4";
+import cyreneGif from "../../assets/cyrene.gif";
+import cyrene101Gif from "../../assets/cyrene101.gif";
+import evernightGif from "../../assets/evernight.gif";
+import everynightigbGif from "../../assets/everynightigb.gif";
+import stealGif from "../../assets/steal.gif";
+
+import fadedGif from "../../assets/faded.gif";
+import huTaoDanceGif from "../../assets/hutaodance.gif";
+import trainGif from "../../assets/the-train.gif";
 
 const gifGallery = [
   { src: yoimiyaGif, title: "Gym mood boost" },
@@ -12,6 +21,16 @@ const gifGallery = [
   { src: frierenGif, title: "Focused progress" },
   { src: igbGif, title: "Night training vibes" },
   { src: bladeGif, title: "Blade energy" },
+
+  { src: cyreneGif, title: "Calm focus" },
+  { src: cyrene101Gif, title: "Flow state" },
+  // { src: evernightGif, title: "Late night grind" },
+  { src: everynightigbGif, title: "Deep focus mode" },
+  { src: stealGif, title: "Quick burst energy" },
+
+  { src: fadedGif, title: "Calm reset" },
+  { src: huTaoDanceGif, title: "High energy boost" },
+  { src: trainGif, title: "Journey mindset" },
 ];
 
 const topics = [
@@ -50,18 +69,18 @@ export function About() {
                 <p className="text-sm uppercase tracking-[0.25em] text-orange-100 mb-4">
                   About Gator Gains
                 </p>
-                <h1 className="text-4xl md:text-5xl font-bold mb-4">Fitness for beginners, powered by gamification.</h1>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4">Fitness for beginners, powered by UF students.</h1>
                 <p className="max-w-3xl text-lg leading-8 text-orange-100/90">
-                  Designed for students, first-time gym-goers, and anyone who wants a more fun and motivating way to build healthy habits. Gator Gains turns workouts into a journey with rewards, progress, and community energy.
+                  Designed for college students, first-time gym-goers, and anyone who wants a more fun and motivating way to build healthy habits. Gator Gains turns workouts into a journey with rewards, progress, and community energy.
                 </p>
               </div>
 
               <div className="flex items-center justify-center">
-                <div className="relative overflow-hidden rounded-[2rem] border border-slate-200 shadow-2xl bg-slate-900">
+                <div className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-slate-200 shadow-2xl bg-slate-900">
                   <img
-                    src={yoimiyaGif}
+                    src={evernightGif}
                     alt="Fitness sticker"
-                    className="h-[320px] w-full object-cover sm:h-[360px]"
+                    className="h-[320px] w-full object-cover sm:h-[567px]"
                   />
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-900/95 to-transparent p-5 text-white">
                     <p className="text-sm uppercase tracking-[0.25em] text-orange-300 mb-2">Get pumped</p>
@@ -98,7 +117,7 @@ export function About() {
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h2 className="text-2xl font-bold text-slate-900">Sticker gallery</h2>
-                  <p className="text-sm text-slate-500">A few fun visuals to match the Gator Gains vibe.</p>
+                  <p className="text-sm text-slate-500">A few fun gifs to match the Gator Gains vibe.</p>
                 </div>
               </div>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -122,7 +141,7 @@ export function About() {
                 <div className="p-6 text-white bg-gradient-to-t from-slate-950/90 to-transparent">
                   <h3 className="text-xl font-semibold">Ambient motivation</h3>
                   <p className="mt-2 text-slate-200">
-                    A dynamic background video to keep the About page feeling alive and energetic.
+                    A dynamic background video to keep our app alive and energetic.
                   </p>
                 </div>
               </div>
