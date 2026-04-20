@@ -1,7 +1,14 @@
 import { ArrowRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function Hero() {
+  const navigate = useNavigate();
+
+  const handleStartJourney = () => {
+    navigate("/login");
+  };
+
   return (
     <section className="pt-24 pb-16 md:pt-32 md:pb-24">
       <div className="container mx-auto px-4">
@@ -17,7 +24,10 @@ export function Hero() {
               Level up your gains with our gamified workout system. Earn points, unlock badges, and dominate the swamp one rep at a time.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <button className="px-8 py-4 bg-gradient-to-r from-orange-600 to-blue-600 text-white rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 group">
+              <button 
+                onClick={handleStartJourney}
+                className="px-8 py-4 bg-gradient-to-r from-orange-600 to-blue-600 text-white rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+              >
                 Start Your Journey
                 <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
               </button>
