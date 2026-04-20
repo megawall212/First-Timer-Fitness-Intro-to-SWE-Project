@@ -1,16 +1,63 @@
-# React + Vite
+# Gator Gains Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This directory contains the main React + Vite frontend for the Gator Gains fitness app.
 
-Currently, two official plugins are available:
+## Overview
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+The frontend is built with:
 
-## React Compiler
+- React 19
+- Vite
+- Tailwind CSS
+- React Router DOM
+- Firebase Authentication
+- Firebase Firestore data access
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The app includes:
 
-## Expanding the ESLint configuration
+- Home page with features, workouts, and badge sections
+- Login and signup pages
+- About page with interactive content and animated media
+- Header navigation across all pages
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Setup
+
+Install dependencies and start the development server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+⚠️ Make sure your Firebase config is set in `frontend/src/firebase.js`.
+
+## Scripts
+
+- `npm run dev` - start the Vite development server
+- `npm run build` - build the production bundle
+- `npm run preview` - preview the production build locally
+- `npm run lint` - run ESLint across the frontend source files
+
+## Project Structure
+
+- `src/main.jsx` - React entry point
+- `src/firebase.js` - Firebase configuration and exports
+- `src/app/App.jsx` - main application routes and auth state
+- `src/app/components/` - shared UI components and header
+- `src/app/pages/` - page components: `Home`, `Login`, `Signup`, `About`
+- `src/styles/` - global and theme styles
+
+## Notes
+
+- The app uses client-side routing with `BrowserRouter`.
+- The header contains links to `/login`, `/signup`, `/about`, and home sections.
+- If you add Firebase auth, update the allowed domains and auth providers in your Firebase console.
+
+## Recommended Improvements
+
+- Add form validation feedback for login/signup
+- Enable smooth section scrolling for internal page anchors
+- Add persistent user profile state after login
+- Complete social login flows and GitHub OAuth support
+

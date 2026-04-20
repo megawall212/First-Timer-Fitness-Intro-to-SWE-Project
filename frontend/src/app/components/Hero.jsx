@@ -1,16 +1,58 @@
+import { useState, useEffect } from "react";
 import { ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 
 export function Hero() {
   const navigate = useNavigate();
+  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [scrollOffset, setScrollOffset] = useState(0);
 
   const handleStartJourney = () => {
     navigate("/login");
   };
 
+  useEffect(() => {
+    const onScroll = () => {
+      setScrollOffset(window.scrollY / 18);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleMouseMove = (event) => {
+    const { clientX, clientY, currentTarget } = event;
+    const { width, height, left, top } = currentTarget.getBoundingClientRect();
+    const x = ((clientX - left) / width - 0.5) * 18;
+    const y = ((clientY - top) / height - 0.5) * 18;
+    setMouseOffset({ x, y });
+  };
+
+  const handleMouseLeave = () => {
+    setMouseOffset({ x: 0, y: 0 });
+  };
+
   return (
-    <section className="pt-24 pb-16 md:pt-32 md:pb-24">
+    <section
+      className="relative overflow-hidden pt-24 pb-16 md:pt-32 md:pb-24"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      <div
+        className="absolute inset-0 home-hero-background pointer-events-none"
+        style={{
+          transform: `translate3d(${mouseOffset.x}px, ${mouseOffset.y + scrollOffset}px, 0)`,
+        }}
+      >
+        <span className="home-star home-star-1" />
+        <span className="home-star home-star-2" />
+        <span className="home-star home-star-3" />
+        <span className="home-star home-star-4" />
+        <span className="home-star home-star-5" />
+        <span className="home-dumbbell home-dumbbell-1" />
+        <span className="home-dumbbell home-dumbbell-2" />
+      </div>
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -26,7 +68,7 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-4">
               <button 
                 onClick={handleStartJourney}
-                className="px-8 py-4 bg-gradient-to-r from-orange-600 to-blue-600 text-white rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                className="hero-cta-glow px-8 py-4 bg-gradient-to-r from-orange-600 to-blue-600 text-white rounded-lg hover:from-orange-700 hover:to-blue-700 transition-all flex items-center justify-center gap-2 group cursor-pointer"
               >
                 Start Your Journey
                 <ArrowRight className="size-5 group-hover:translate-x-1 transition-transform" />
