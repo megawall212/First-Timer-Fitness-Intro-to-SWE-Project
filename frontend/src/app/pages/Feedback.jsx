@@ -4,7 +4,9 @@ import { MessageSquare, Send, CheckCircle, Bug, Lightbulb, MessageCircle, Star }
 import taoGif from "../../assets/feedback_media/tao.gif";
 import furinaVideo from "../../assets/feedback_media/furina.mp4";
 
+// email service for user confirmation
 
+import emailjs from "@emailjs/browser";
 
 
 export default function Feedback() {
@@ -12,6 +14,7 @@ export default function Feedback() {
   const [feedbackType, setFeedbackType] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userEmail, setUserEmail] = useState(''); //for user email 
 
 
    const [currentMedia, setCurrentMedia] = useState(0);
@@ -32,18 +35,37 @@ export default function Feedback() {
   ];
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    // Simulate async submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Feedback submitted:', { type: feedbackType, message: feedback });
-    setIsSubmitting(false);
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  const templateParams = {
+    type: feedbackType,
+    message: feedback,
+    user_email: userEmail,
+  };
+
+  try {
+    await emailjs.send(
+      "service_9dk1kop",     // service ID
+      "template_ehutzay",    // template ID
+      templateParams,
+      "gBR8KXFZrNg-zXcLP"      // find it on emailjs dashboard
+    );
+
     setSubmitted(true);
     setFeedback('');
     setFeedbackType('');
-    // Reset after 3 seconds
+
+    // auto reset the form after 3 seconds
+    
     setTimeout(() => setSubmitted(false), 3000);
-  };
+  } catch (error) {
+  console.error("EmailJS error:", error);
+  alert(`Failed to send feedback: ${error?.text || error?.message || "unknown error"}`);
+}
+
+  setIsSubmitting(false);
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-blue-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -100,6 +122,28 @@ export default function Feedback() {
                     })}
                   </div>
                 </div>
+
+
+
+                {/* Email input*/}
+    <div className="animate-slide-up animation-delay-300">
+    <label htmlFor="userEmail" className="block text-sm font-medium text-gray-700 mb-2">
+    Your Email
+    </label>
+    <input
+    id="userEmail"
+    name="userEmail"
+    type="email"
+    className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200"
+    placeholder="Enter your email"
+    value={userEmail}
+    onChange={(e) => setUserEmail(e.target.value)}
+    required
+  />
+</div>
+
+
+
 
                 <div className="animate-slide-up animation-delay-300">
                   <label htmlFor="feedback" className="block text-sm font-medium text-gray-700 mb-2 animate-fade-in animation-delay-400">
