@@ -5,6 +5,9 @@ import { LoggedInContext } from "../../Context";
 import { auth } from "../../firebase";
 import { signOut } from "firebase/auth";
 
+
+
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { loggedIn, userInfo } = useContext(LoggedInContext);
@@ -63,6 +66,7 @@ export default function Header() {
             </button>
           </li>
           <li><Link to="/about" className="text-gray-700 hover:text-orange-600 transition-colors">About</Link></li>
+          <li><Link to="/feedback" className="text-gray-700 hover:text-orange-600 transition-colors">Feedback</Link></li>
         </ul>
 
         {!loggedIn ? (
@@ -134,6 +138,7 @@ export default function Header() {
                 </button>
               </li>
               <li><Link to="/about" className="text-gray-700 hover:text-orange-600 transition-colors">About</Link></li>
+              <li><Link to="/feedback" className="text-gray-700 hover:text-orange-600 transition-colors">Feedback</Link></li>
 
               {!loggedIn ? (
                 <>

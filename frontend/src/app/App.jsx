@@ -3,6 +3,7 @@ import SignIn from "./pages/Login";
 import SignUp from "./pages/Signup";
 import { Home } from './pages/Home';
 import { About } from './pages/About';
+import Feedback from './pages/Feedback';
 import Header from "./components/Header"; 
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
@@ -97,6 +98,7 @@ function App() {
           <Route path="/login" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/about" element={<About />} />
+          <Route path="/feedback" element={<Feedback />} />
           <Route path="/" element={<Home />} />
         </Routes>
 
