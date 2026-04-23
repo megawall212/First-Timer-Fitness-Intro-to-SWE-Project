@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useRef} from 'react';
 import { MessageSquare, Send, CheckCircle, Bug, Lightbulb, MessageCircle, Star } from 'lucide-react';
 
 import taoGif from "../../assets/feedback_media/tao.gif";
@@ -14,18 +14,70 @@ export default function Feedback() {
   const [feedbackType, setFeedbackType] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userEmail, setUserEmail] = useState(''); //for user email 
+  const [userEmail, setUserEmail] = useState('');  // for user email 
+  const [currentMedia, setCurrentMedia] = useState(0);
+
+  // for background music 
+
+  const audioRef = useRef(null);
+  const [playbackRate] = useState(1);
 
 
-   const [currentMedia, setCurrentMedia] = useState(0);
+  // for background music 
 
-  useEffect(() => {
+  const songFiles = import.meta.glob("../../assets/bgm/*.{mp3,wav,ogg}", {
+  eager: true,
+  import: "default",
+});
+
+const musicOptions = Object.entries(songFiles).map(([path, src], index) => {
+  const fileName = path.split("/").pop().replace(/\.[^/.]+$/, "");
+  return {
+    id: index,
+    title: fileName,
+    src,
+  };
+});
+
+const [selectedMusic, setSelectedMusic] = useState(
+  musicOptions.length > 0 ? musicOptions[0].src : ""
+);
+
+  useEffect(() => { 
+
+    // media switch effect
+
     const interval = setInterval(() => {
       setCurrentMedia(prev => (prev === 0 ? 1 : 0));
     }, 10000); // 10 seconds
 
     return () => clearInterval(interval);
   }, []);
+
+
+    useEffect(() => {
+  if (audioRef.current) {
+    audioRef.current.playbackRate = playbackRate;
+  }
+}, [playbackRate]);
+
+    //switch songs
+
+   useEffect(() => {
+  if (!audioRef.current || !selectedMusic) return;
+
+  const audio = audioRef.current;
+  const wasPlaying = !audio.paused;
+
+  audio.load();
+
+  if (wasPlaying) {
+    audio.play().catch(() => {});
+  }
+}, [selectedMusic]);
+
+
+
 
   const feedbackOptions = [
     { value: 'bug', label: 'Bug Report', icon: Bug, color: 'text-red-600' },
@@ -57,7 +109,7 @@ export default function Feedback() {
     setFeedbackType('');
 
     // auto reset the form after 3 seconds
-    
+
     setTimeout(() => setSubmitted(false), 3000);
   } catch (error) {
   console.error("EmailJS error:", error);
@@ -217,16 +269,34 @@ export default function Feedback() {
             </div>
 
             {/* MP3 Section */}
-            <div className="bg-white rounded-xl shadow-lg p-6 transform transition-all duration-300 hover:shadow-xl">
-              <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">Background Music</h3>
-              <div className="flex justify-center">
-                <audio controls className="w-full max-w-sm">
-                  <source src="https://www.soundjay.com/misc/sounds/bell-ringing-05.wav" type="audio/wav" />
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-              <p className="text-sm text-gray-500 text-center mt-2">Click play for some motivation!</p>
-            </div>
+            <div className="bg-white rounded-xl shadow-lg p-6">
+  <h3 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+    Background Music
+  </h3>
+
+  {/* Song selector */}
+  <div className="mb-4 max-h-40 overflow-y-auto space-y-2">
+    {musicOptions.map((song) => (
+      <button
+  key={song.id}
+  type="button"
+  onClick={() => setSelectedMusic(song.src)}
+  className={`w-full text-left px-3 py-2 rounded-lg border cursor-pointer transition ${
+    selectedMusic === song.src
+      ? "bg-orange-100 border-orange-400"
+      : "hover:bg-orange-50 border-gray-200"
+  }`}
+>
+  {song.title}
+</button>
+    ))}
+  </div>
+
+    {/* Audio player */}
+  <audio key={selectedMusic} controls className="w-full">
+  <source src={selectedMusic} type="audio/mpeg" />
+</audio>
+</div>
           </div>
         </div>
       </div>
