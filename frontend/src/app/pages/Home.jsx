@@ -6,6 +6,9 @@ import { Features } from "../components/Features";
 import { MuscleGroups } from "../components/MuscleGroups";
 import { BadgesSection } from "../components/BadgesSection";
 
+//music
+import { MusicSticker } from "../components/MusicSticker";
+
 export function Home() {
   const location = useLocation();
   const { loggedIn, userInfo } = useContext(LoggedInContext);
@@ -29,6 +32,7 @@ export function Home() {
 
   return (
     <>
+      <MusicSticker />
       {isGator && (
         <div className="bg-gradient-to-r from-orange-600 to-blue-600 text-white py-4 px-4 text-center">
           <div className="container mx-auto">
